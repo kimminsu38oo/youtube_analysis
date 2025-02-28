@@ -20,7 +20,7 @@ A FastAPI-based API that analyzes a user's YouTube watch history, likes, and sub
 1. **Clone the Repository**
 ```bash
 git clone https://github.com/kimminsu38oo/youtube_analysis.git
-cd youtube_analysis_server
+cd youtube_analysis
 ```
 
 2. **Set Up a Virtual Environment**
