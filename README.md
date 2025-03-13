@@ -34,6 +34,7 @@ venv\Scripts\activate     # On Windows
 ```bash
 pip install -r requirements.txt
 ```
+4. Make .env file and write your openai api key
 
 ## Usage
 
