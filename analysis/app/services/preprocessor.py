@@ -62,56 +62,7 @@ class DataPreprocessor:
             self.logger.error(f"History preprocessing failed: {str(e)}")
             raise Exception(f"History preprocessing failed: {str(e)}")
 
-    async def preprocess_likes(self, likes_data: Dict[str, Any]) -> List[Dict[str, str]]:
-        """
-        좋아요 누른 데이터 전처리
-        Returns:
-            동영상 제목, 동영상 설명, 채널 명 추출
-        Example Returns:
-        [
-            {
-                'title': '내 컴퓨터도 이렇게 돼있으면 무조건 보세요',
-                'description': '#컴퓨터 #직장인 #노트북 #PC #대학생\n모든문의 : test@test.com',
-                'channel': '1분미만'
-            },
-            {
-                'title': '아는 형님 하이라이트',
-                'description': '207cm 서장훈\n키 작다고 놀리는 유일한 존재 하승진',
-                'channel': 'JTBC Voyage'
-            }
-        ]
-        """
-        try:
-            processed_data = []
-            items = likes_data.get('items', [])
-            
-            for item in items:
-                snippet = item.get('snippet', {})
-                
-                # 필요한 정보만 추출
-                processed_item = {
-                    'title': snippet.get('title', 'Deleted video'),
-                    'description': snippet.get('description', '').strip(),
-                    'channel': snippet.get('videoOwnerChannelTitle', 'Unknown Channel')
-                }
-                
-                # 유효한 동영상 데이터만 포함
-                if processed_item['title'] != 'Deleted video' and processed_item['channel'] != 'Unknown Channel':
-                    # 설명 텍스트 처리
-                    if not processed_item['description']:
-                        processed_item['description'] = 'No description'
-                    elif len(processed_item['description']) > 500:
-                        processed_item['description'] = processed_item['description'][:500] + '...'
-                    
-                    processed_data.append(processed_item)
-            
-            return processed_data
-            
-        except Exception as e:
-            self.logger.error(f"Likes preprocessing failed: {str(e)}")
-            raise Exception(f"Likes preprocessing failed: {str(e)}")
-
-    async def preprocess_subscriptions(self, data: Dict[str, Any]) -> List[Dict[str, str]]:
+    async def preprocess_subscriptions(self, data: Any) -> List[Dict[str, str]]:
         """
         구독 채널 데이터 전처리
         Returns:
@@ -119,42 +70,42 @@ class DataPreprocessor:
         Example Returns:
         [
             {
-                'title': '스포타임',
-                'description': "'스포타임(SPOTIME)'은 SPOTV의 영상 콘텐츠 브랜드입니다."
-            },
-            {
-                'title': 'MBCNEWS',
-                'description': 'MBC 뉴스 공식 유튜브 채널입니다. 시청자 여러분의 의견과 제보를 항상 기다립니다.'
+                'title': '살란다',
+                'description': 'No description'
             }
         ]
         """
         try:
             processed_data = []
-            items = data.get('items', [])  # items 키로 접근
-            
-            for item in items:  # items 리스트를 순회
-                snippet = item.get('snippet', {})
-                
-                # 필요한 필드 추출
-                processed_item = {
-                    'title': snippet.get('title', 'Unknown Channel'),
-                    'description': snippet.get('description', '').strip()
-                }
-                
-                # 유효한 채널만 포함
-                if processed_item['title'] != 'Unknown Channel':
-                    # 빈 설명 처리
-                    if not processed_item['description']:
-                        processed_item['description'] = 'No description'
-                        
-                    # 긴 설명 자르기
-                    if len(processed_item['description']) > 500:
-                        processed_item['description'] = processed_item['description'][:500] + '...'
-                    
-                    processed_data.append(processed_item)
-            
+
+            # 데이터 형식 확인
+            if isinstance(data, dict) and 'items' in data:
+                # 기존 형식 처리 (items 키가 있는 딕셔너리)
+                items = data.get('items', [])
+                for item in items:
+                    snippet = item.get('snippet', {})
+                    processed_item = {
+                        'title': snippet.get('title', 'Unknown Channel'),
+                        'description': snippet.get('description', '').strip() or 'No description'
+                    }
+                    if processed_item['title'] != 'Unknown Channel':
+                        if len(processed_item['description']) > 500:
+                            processed_item['description'] = processed_item['description'][:500] + '...'
+                        processed_data.append(processed_item)
+
+            elif isinstance(data, list):
+                # 새로운 형식 처리 (리스트)
+                for item in data:
+                    if isinstance(item, dict):
+                        processed_item = {
+                            'title': item.get('채널 제목', 'Unknown Channel'),
+                            'description': 'No description'
+                        }
+                        if processed_item['title'] != 'Unknown Channel':
+                            processed_data.append(processed_item)
+
             return processed_data
-            
+
         except Exception as e:
             self.logger.error(f"Subscriptions preprocessing failed: {str(e)}")
             raise Exception(f"Subscriptions preprocessing failed: {str(e)}")
