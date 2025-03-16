@@ -73,13 +73,14 @@
             cursor: pointer;
             font-size: 16px;
             margin-top: 10px;
+            margin-right: 10px;
         }
         
         button:hover {
             background-color: #1557b0;
         }
         
-        input[type="file"] {
+        input[type="file"], input[type="text"] {
             margin-bottom: 10px;
             display: block;
         }
@@ -147,10 +148,29 @@
             background-color: #f5f5f5;
             border-radius: 4px;
         }
+
+        .mode-selector {
+            display: flex;
+            margin-bottom: 15px;
+        }
+
+        .mode-selector label {
+            margin-right: 15px;
+            display: flex;
+            align-items: center;
+        }
+
+        .analysis-id-input {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #f8f8f8;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+        }
     </style>
 </head>
 <body>
-    <h1>YouTube 분석 스트리밍 데모</h1>
+    <h1>YouTube 분석 데모</h1>
     
     <div class="server-config">
         <label for="server-url">서버 URL:</label>
@@ -159,6 +179,20 @@
     
     <div id="upload-form" class="panel">
         <h3>파일 업로드</h3>
+        <div class="mode-selector">
+            <label>
+                <input type="radio" name="analysis-mode" value="stream" checked> 스트리밍 모드
+            </label>
+            <label>
+                <input type="radio" name="analysis-mode" value="regular"> 일반 모드
+            </label>
+        </div>
+        
+        <div class="analysis-id-input">
+            <label for="analysis-id">분석 ID:</label>
+            <input type="text" id="analysis-id" value="" placeholder="test로 입력하면 테스트 데이터 사용" style="width: 300px;">
+        </div>
+        
         <form id="analysis-form">
             <div>
                 <label for="history-file">history.json:</label>
@@ -214,6 +248,8 @@
             const historyFile = document.getElementById('history-file').files[0];
             const subscriptionsFile = document.getElementById('subscriptions-file').files[0];
             const serverUrl = document.getElementById('server-url').value.trim();
+            const analysisId = document.getElementById('analysis-id').value.trim() || 'analysis-' + Date.now();
+            const analysisMode = document.querySelector('input[name="analysis-mode"]:checked').value;
             
             if (!historyFile || !subscriptionsFile) {
                 alert('두 파일 모두 선택해주세요.');
@@ -233,8 +269,14 @@
             formData.append('history_file', historyFile);
             formData.append('subscriptions_file', subscriptionsFile);
             
-            // 분석 요청 시작
-            streamAnalysis(formData, serverUrl);
+            // 분석 모드에 따라 다른 처리
+            if (analysisMode === 'stream') {
+                // 스트리밍 분석 요청 시작
+                streamAnalysis(formData, serverUrl, analysisId);
+            } else {
+                // 일반 분석 요청 시작
+                regularAnalysis(formData, serverUrl, analysisId);
+            }
         });
         
         function resetPanels() {
@@ -254,12 +296,10 @@
             log('분석 패널 초기화 완료');
         }
         
-        function streamAnalysis(formData, serverUrl) {
-            // 분석 ID 생성
-            const analysisId = 'analysis-' + Date.now();
+        function streamAnalysis(formData, serverUrl, analysisId) {
             const endpoint = `${serverUrl}/api/v1/analysis-stream/${analysisId}`;
             
-            log(`분석 요청 시작: ${endpoint}`);
+            log(`스트리밍 분석 요청 시작: ${endpoint}`);
             
             // 요청 옵션 설정
             const requestOptions = {
@@ -318,6 +358,73 @@
                     
                     // 첫 번째 청크 읽기 시작
                     return reader.read().then(processChunk);
+                })
+                .catch(error => {
+                    log(`오류 발생: ${error.message}`);
+                    console.error('Fetch error:', error);
+                    alert('분석 중 오류가 발생했습니다: ' + error.message);
+                    
+                    // 모든 패널을 오류 상태로 변경
+                    ['hourly-status', 'keyword-status', 'llm-status'].forEach(id => {
+                        const element = document.getElementById(id);
+                        element.className = 'status-badge status-error';
+                        element.textContent = '오류';
+                    });
+                });
+        }
+
+        function regularAnalysis(formData, serverUrl, analysisId) {
+            const endpoint = `${serverUrl}/api/v1/analysis/${analysisId}`;
+            
+            log(`일반 분석 요청 시작: ${endpoint}`);
+            
+            // 요청 옵션 설정
+            const requestOptions = {
+                method: 'POST',
+                body: formData
+            };
+            
+            // 요청 시작
+            fetch(endpoint, requestOptions)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    log(`분석 결과 수신 완료: ${JSON.stringify(data).substring(0, 50)}...`);
+                    
+                    if (data.status === 'success' && data.data) {
+                        // 시간대별 통계 업데이트
+                        updateHourlyStats({
+                            function: 'hourly_stats',
+                            status: 'success',
+                            data: data.data.hourlyStats
+                        });
+                        
+                        // 키워드 빈도 업데이트
+                        updateKeywords({
+                            function: 'keyword_frequency',
+                            status: 'success',
+                            data: data.data.keywordFrequency.map(kw => ({
+                                keyword: kw.keyword,
+                                frequency: kw.frequency
+                            }))
+                        });
+                        
+                        // LLM 분석 업데이트
+                        updateLLMAnalysis({
+                            function: 'llm_analysis',
+                            status: 'success',
+                            data: data.data.llmAnalysis
+                        });
+                        
+                        log('모든 분석 결과 처리 완료');
+                    } else {
+                        log(`분석 실패: ${data.status}`);
+                        throw new Error('분석 결과 처리에 실패했습니다.');
+                    }
                 })
                 .catch(error => {
                     log(`오류 발생: ${error.message}`);
