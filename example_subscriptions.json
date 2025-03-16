@@ -1,0 +1,72 @@
+{
+  "kind": "youtube#SubscriptionListResponse",
+  "etag": "806qT2wI63LfH_xm6etW276c3Y8",
+  "pageInfo": {
+    "totalResults": 46,
+    "resultsPerPage": 50
+  },
+  "items": [
+    {
+      "kind": "youtube#subscription",
+      "etag": "UnWa57onN-7pIn0jCVze_78xQUw",
+      "id": "B3d05s29gs0M3v_VF0d08KrC09AwBlF2FpJ7MtiVIQQ",
+      "snippet": {
+        "publishedAt": "2023-11-19T10:47:48.556125Z",
+        "title": "여행가 김한량 Kim Hanryang",
+        "description": "세계여행 중입니다!\n\n이메일 huiseong789@gmail.com",
+        "resourceId": {
+          "kind": "youtube#channel",
+          "channelId": "UCsKlUZDHUMxqp2bPCgfiGGQ"
+        },
+        "channelId": "UCod3vYT9Xjuzs26h9eDPI1A",
+        "thumbnails": {
+          "default": {
+            "url": "https://yt3.ggpht.com/bfDVaMykv94iQRfZE3_snINrThTcQttiKandOJHxi8ttwHpO-YCvRYTFfXNJsKOq_JV1QSIxgQo=s88-c-k-c0x00ffffff-no-rj"
+          },
+          "medium": {
+            "url": "https://yt3.ggpht.com/bfDVaMykv94iQRfZE3_snINrThTcQttiKandOJHxi8ttwHpO-YCvRYTFfXNJsKOq_JV1QSIxgQo=s240-c-k-c0x00ffffff-no-rj"
+          },
+          "high": {
+            "url": "https://yt3.ggpht.com/bfDVaMykv94iQRfZE3_snINrThTcQttiKandOJHxi8ttwHpO-YCvRYTFfXNJsKOq_JV1QSIxgQo=s800-c-k-c0x00ffffff-no-rj"
+          }
+        }
+      },
+      "contentDetails": {
+        "totalItemCount": 145,
+        "newItemCount": 1,
+        "activityType": "all"
+      }
+    },
+    {
+      "kind": "youtube#subscription",
+      "etag": "vs3-1s8isuNALwTIYTj0FOWnQLY",
+      "id": "B3d05s29gs3-FfKgGggZMhb72sRxO4V2SsIP_bcqtDY",
+      "snippet": {
+        "publishedAt": "2025-01-23T15:51:42.169984Z",
+        "title": "진용진",
+        "description": "",
+        "resourceId": {
+          "kind": "youtube#channel",
+          "channelId": "UCIG4gr_wIy5CIlcFciUbIQw"
+        },
+        "channelId": "UCod3vYT9Xjuzs26h9eDPI1A",
+        "thumbnails": {
+          "default": {
+            "url": "https://yt3.ggpht.com/fMURYix9tjm6UON2-GoIRRG33S3AufQuo6fRmFtd1Q6xBnTghkiuDqeQskpNrHz-48vnhnOSfw=s88-c-k-c0x00ffffff-no-rj"
+          },
+          "medium": {
+            "url": "https://yt3.ggpht.com/fMURYix9tjm6UON2-GoIRRG33S3AufQuo6fRmFtd1Q6xBnTghkiuDqeQskpNrHz-48vnhnOSfw=s240-c-k-c0x00ffffff-no-rj"
+          },
+          "high": {
+            "url": "https://yt3.ggpht.com/fMURYix9tjm6UON2-GoIRRG33S3AufQuo6fRmFtd1Q6xBnTghkiuDqeQskpNrHz-48vnhnOSfw=s800-c-k-c0x00ffffff-no-rj"
+          }
+        }
+      },
+      "contentDetails": {
+        "totalItemCount": 623,
+        "newItemCount": 1,
+        "activityType": "all"
+      }
+    }
+  ]
+}
