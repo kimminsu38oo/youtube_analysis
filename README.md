@@ -55,7 +55,7 @@ uvicorn app.main:app --reload
 
 ## API Endpoints
 
-### Traditional Analysis Endpoint
+### Standard Analysis Endpoint
 **Endpoint**: `POST /api/v1/analysis/{analysis_id}`
 **Request**: Upload two files - `history_file` and `subscriptions_file`
 **Response**: Returns a complete analysis in a single response
@@ -134,8 +134,8 @@ uvicorn app.main:app --reload
 
 ## Testing the Streaming API
 You can test the streaming functionality using the included `test.html` file:
-1. Open the `test.html` file in your web browser
-2. Enter the server URL (default: http://localhost:8000)
+1. First, make sure the server is running (see "Run the API" section above)
+2. Open the `test.html` file in your web browser
 3. Upload your history.json and subscriptions.json files
 4. Click "Start Analysis" to see the real-time streaming results
 5. Each analysis component will update as soon as it's processed by the server
