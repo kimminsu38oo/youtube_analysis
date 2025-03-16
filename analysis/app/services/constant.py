@@ -45,5 +45,5 @@ LLM_ANALYSIS_PROMPT = """
 중요: 사용자에게 직접 말하듯이 작성하고, 지나치게 형식적이거나 기계적인 분석은 피해주세요.
 """
 
-KEYWORD_EXTRACTER_MODEL = "gpt-3.5-turbo-0125"
+KEYWORD_EXTRACTER_MODEL = "gpt-4o-2024-11-20"
 ANLYSIS_AGENT = "gpt-3.5-turbo-0125"
